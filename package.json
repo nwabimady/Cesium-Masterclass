@@ -12,7 +12,9 @@
     "vite": "^4.4.5"
   },
   "dependencies": {
+    "@cesium/widgets": "^4.3.1",
     "bim-fragment": "1.0.25",
+    "cesium": "^1.112.0",
     "openbim-components": "1.1.9",
     "three": "0.152.2",
     "web-ifc": "^0.0.46",

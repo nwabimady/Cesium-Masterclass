@@ -1,53 +1,33 @@
-import * as OBC from "openbim-components"
-import * as THREE from "three"
+const win = window as any;
+win.CESIUM_BASE_URL = "/public/Cesium";
 
-const viewer = new OBC.Components()
-viewer.onInitialized.add(() => {})
+import { Cartesian3, Ion, Terrain, Viewer, createOsmBuildingsAsync, Math as CesiumMath } from "cesium";
 
-const sceneComponent = new OBC.SimpleScene(viewer)
-sceneComponent.setup()
-viewer.scene = sceneComponent
+Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3OTdmMWFlYi1lNjY2LTQzMTctYWIyNC1lNmYwZDc1ZjhkYzAiLCJpZCI6MTg0NTQwLCJpYXQiOjE3MDI1ODYzOTV9.vYeiNJ8X5BTa4C1c0bGagP0Hx3O0v0YVUSRdz1RUC2E";
 
-const viewerContainer = document.getElementById("app") as HTMLDivElement
-const rendererComponent = new OBC.PostproductionRenderer(viewer, viewerContainer)
-viewer.renderer = rendererComponent
-const postproduction = rendererComponent.postproduction
-
-const cameraComponent = new OBC.OrthoPerspectiveCamera(viewer)
-viewer.camera = cameraComponent
-
-const raycasterComponent = new OBC.SimpleRaycaster(viewer)
-viewer.raycaster = raycasterComponent
-
-viewer.init()
-postproduction.enabled = true
-
-const grid = new OBC.SimpleGrid(viewer, new THREE.Color(0x666666))
-postproduction.customEffects.excludedMeshes.push(grid.get())
-
-const ifcLoader = new OBC.FragmentIfcLoader(viewer)
-
-const highlighter = new OBC.FragmentHighlighter(viewer)
-highlighter.setup()
-
-const propertiesProcessor = new OBC.IfcPropertiesProcessor(viewer)
-highlighter.events.select.onClear.add(() => {
-  propertiesProcessor.cleanPropertiesList()
+const viewer = new Viewer("cesiumContainer", {
+  terrain: Terrain.fromWorldTerrain(),
+  //useDefaultRenderLoop: false,
 })
 
-ifcLoader.onIfcLoaded.add(async model => {
-  propertiesProcessor.process(model)
-  highlighter.events.select.onHighlight.add((selection) => {
-    const fragmentID = Object.keys(selection)[0]
-    const expressID = Number([...selection[fragmentID]][0])
-    propertiesProcessor.renderProperties(model, expressID)
+const buildingTileset = await createOsmBuildingsAsync();
+viewer.scene.primitives.add(buildingTileset);
+
+const minWGS84 = [ -4.4939814368228514, 54.165382211988955];
+const maxWGS84 = [ -4.469680337004611, 54.16049659076441];
+
+const offset = 0.002;
+const center = Cartesian3.fromDegrees(
+  (minWGS84[0] + maxWGS84[0]) / 2,
+  (minWGS84[1] + maxWGS84[1]) / 2 - offset,
+  500
+  );
+
+  viewer.camera.flyTo({
+    destination:center,
+    orientation: {
+      heading: CesiumMath.toRadians(0),
+      pitch: CesiumMath.toRadians(-60),
+      roll: CesiumMath.toRadians(0),
+    }
   })
-  highlighter.update()
-})
-
-const mainToolbar = new OBC.Toolbar(viewer)
-mainToolbar.addChild(
-  ifcLoader.uiElement.get("main"),
-  propertiesProcessor.uiElement.get("main")
-)
-viewer.ui.addToolbar(mainToolbar)
