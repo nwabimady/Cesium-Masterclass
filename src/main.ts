@@ -2,6 +2,8 @@ const win = window as any;
 win.CESIUM_BASE_URL = "/public/Cesium";
 
 import { Cartesian3, Ion, Terrain, Viewer, createOsmBuildingsAsync, Math as CesiumMath } from "cesium";
+import *as OBC from "openbim-components"
+import { CesiumCamera } from "./cesium-camera";
 
 Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3OTdmMWFlYi1lNjY2LTQzMTctYWIyNC1lNmYwZDc1ZjhkYzAiLCJpZCI6MTg0NTQwLCJpYXQiOjE3MDI1ODYzOTV9.vYeiNJ8X5BTa4C1c0bGagP0Hx3O0v0YVUSRdz1RUC2E";
 
@@ -31,3 +33,17 @@ const center = Cartesian3.fromDegrees(
       roll: CesiumMath.toRadians(0),
     }
   })
+
+  const ThreeContainer = document.getElementById("ThreeContainer") as HTMLElement;
+  const components = new OBC.Components();
+  components.scene = new OBC.SimpleScene(components);
+  components.renderer = new OBC.SimpleRenderer(components, ThreeContainer, {alpha: true});
+  components.camera = new CesiumCamera(components);
+  components.raycaster = new OBC.SimpleRaycaster(components);
+  components.init();
+  
+  const sceneComp = components.scene as OBC.SimpleScene;
+  sceneComp.setup();
+  const scene = sceneComp.get();
+  scene.background = null;
+  
