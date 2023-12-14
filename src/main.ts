@@ -1,9 +1,10 @@
 const win = window as any;
 win.CESIUM_BASE_URL = "/public/Cesium";
 
-import { Cartesian3, Ion, Terrain, Viewer, createOsmBuildingsAsync, Math as CesiumMath } from "cesium";
+import { Cartesian3, Ion, Terrain, Viewer, createOsmBuildingsAsync, Math as CesiumMath, Color } from "cesium";
 import *as OBC from "openbim-components"
 import { CesiumCamera } from "./cesium-camera";
+import * as THREE from "three";
 
 Ion.defaultAccessToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI3OTdmMWFlYi1lNjY2LTQzMTctYWIyNC1lNmYwZDc1ZjhkYzAiLCJpZCI6MTg0NTQwLCJpYXQiOjE3MDI1ODYzOTV9.vYeiNJ8X5BTa4C1c0bGagP0Hx3O0v0YVUSRdz1RUC2E";
 
@@ -46,4 +47,28 @@ const center = Cartesian3.fromDegrees(
   sceneComp.setup();
   const scene = sceneComp.get();
   scene.background = null;
+  
+  const camera = components.camera.get() as THREE.PerspectiveCamera;
+  camera.fov = 45;
+  const width = window.innerWidth;
+  const height =  window.innerHeight;
+  camera.aspect = width / height;
+  camera.near = 1;
+  camera.far = 10 * 1000 * 10000 ;
+  
+  const renderer = components.renderer as OBC.SimpleRenderer;
+
+  const entity =  {
+    name: "Polygon",
+    polygon : { 
+      hierarchy : Cartesian3.fromDegreesArray([
+        minWGS84[0], minWGS84[1],
+        maxWGS84[0], minWGS84[1],
+        maxWGS84[0], maxWGS84[1],
+        minWGS84[0], maxWGS84[1],
+      ]),
+      material : Color.RED.withAlpha(0.2)
+    }
+  };
+  const Polygon = viewer.entities.add(entity);
   
