@@ -1,0 +1,21 @@
+{
+  "name": "openbim-vite",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@types/three": "^0.156.0",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.5"
+  },
+  "dependencies": {
+    "bim-fragment": "1.0.25",
+    "openbim-components": "1.1.9",
+    "three": "0.152.2",
+    "web-ifc": "^0.0.46",
+    "yarn": "^1.22.21"
+  }
+}
