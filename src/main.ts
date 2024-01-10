@@ -70,7 +70,9 @@ const center = Cartesian3.fromDegrees(
       material : Color.RED.withAlpha(0.2)
     }
   };
-  const Polygon = viewer.entities.add(entity);
+
+  //@ts-ignore
+  const polygon = viewer.entities.add(entity);
 
   type Object3D = {
     threeMesh: THREE.Object3D,
@@ -105,6 +107,7 @@ renderer.onBeforeUpdate.add(() => {
   const height =  window.innerHeight;
   camera.aspect = width / height;
 
+  //@ts-ignore
   const perspectiveFrustum = viewer.camera.frustum as THREE.PerspectiveFrustum;
   if(perspectiveFrustum.fovy === undefined) return;
 
