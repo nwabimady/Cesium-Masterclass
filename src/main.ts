@@ -71,7 +71,6 @@ const center = Cartesian3.fromDegrees(
     }
   };
 
-  //@ts-ignore
   const polygon = viewer.entities.add(entity);
 
   type Object3D = {
@@ -107,7 +106,7 @@ renderer.onBeforeUpdate.add(() => {
   const height =  window.innerHeight;
   camera.aspect = width / height;
 
-  //@ts-ignore
+//@ts-ignore
   const perspectiveFrustum = viewer.camera.frustum as THREE.PerspectiveFrustum;
   if(perspectiveFrustum.fovy === undefined) return;
 
